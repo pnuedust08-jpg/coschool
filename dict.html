@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핵심 IT 및 비즈니스 용어 사전</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import and application */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+        /* Hide scrollbar for aesthetics */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div id="app" class="max-w-4xl mx-auto">
+        
+        <!-- Header -->
+        <header class="mb-10 p-6 bg-white rounded-xl shadow-lg relative">
+            <!-- Home Link Added Here -->
+            <a href="index.html" class="absolute left-6 top-6 text-indigo-600 hover:text-indigo-800 font-semibold transition duration-150 text-base flex items-center space-x-1">
+                <span class="text-xl">🏠</span>
+                <span>홈</span>
+            </a>
+            <div class="text-center">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2 tracking-tight">
+                    핵심 IT 및 비즈니스 용어 사전
+                </h1>
+                <p class="text-lg text-gray-500">
+                    Fintech, AI, 데이터 및 경영 전략 주요 용어집
+                </p>
+            </div>
+        </header>
+
+        <!-- Control Panel (Search & Filter) -->
+        <div class="sticky top-0 z-10 bg-f4f7f9 pb-4">
+            <div class="flex flex-col sm:flex-row gap-4 mb-6 bg-white p-4 rounded-xl shadow-md">
+                <!-- Search Input -->
+                <input type="text" id="searchInput" oninput="filterGlossary()" placeholder="용어 또는 정의 검색..." 
+                       class="w-full sm:w-2/3 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                
+                <!-- Category Filter -->
+                <select id="categoryFilter" onchange="filterGlossary()"
+                        class="w-full sm:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none cursor-pointer focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
+                    <option value="all">전체 분류 보기</option>
+                    <option value="금융 및 핀테크">금융 및 핀테크</option>
+                    <option value="IT 및 데이터">IT 및 데이터</option>
+                    <option value="인공지능 및 4차 산업혁명">인공지능 및 4차 산업혁명</option>
+                    <option value="경영 및 전략">경영 및 전략</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Glossary List -->
+        <div id="glossaryList" class="space-y-4">
+            <!-- Content will be rendered here by JavaScript -->
+            <p id="noResults" class="text-center text-xl text-gray-500 hidden p-10 bg-white rounded-xl shadow-md">
+                검색 결과가 없습니다.
+            </p>
+        </div>
+        
+    </div>
+
+    <script>
+        // 1. Data Structure from the provided markdown table
+        const glossaryData = [
+            { category: "금융 및 핀테크", keyword: "Fintech (핀테크)", definition: "금융(Finance)과 기술(Technology)의 융복합(convergence)을 의미합니다. 더 나은 금융 서비스를 제공하기 위해 IT 기술을 접목하는 기업을 통칭합니다." },
+            { category: "금융 및 핀테크", keyword: "Techfin (테크핀)", definition: "정보기술(IT)을 기반으로, 새로운 금융 서비스를 결합하는 개념으로, 2016년 중국 알리바바의 마윈 회장이 언급하며 등장했습니다." },
+            { category: "금융 및 핀테크", keyword: "간편결제 시스템", definition: "사용자들이 온라인 및 오프라인에서 신속하고 쉽게 결제할 수 있도록 지원하는 전자 결제 방식입니다. 빠른 결제 프로세스와 높은 보안성을 제공합니다." },
+            { category: "금융 및 핀테크", keyword: "로보어드바이저 (Robo-Adviser)", definition: "빅데이터와 인공지능 알고리즘 기반으로 고객에게 온라인으로 자산배분(asset allocation) 포트폴리오를 관리해주는 금융 자문 서비스입니다." },
+            { category: "금융 및 핀테크", keyword: "리밸런싱 (rebalancing)", definition: "로보어드바이저가 수행하는 주요 서비스 중 하나로, 운용자산의 편입 비중을 재조정하는 행위입니다." },
+            { category: "금융 및 핀테크", keyword: "인슈어테크 (InsurTech)", definition: "보험(Insurance)과 기술(Technology)의 합성어로, 기술을 활용해 보험 산업의 효율성과 고객 경험을 향상시키는 것을 목표로 합니다." },
+            { category: "금융 및 핀테크", keyword: "P2P 금융 플랫폼 (Peer to Peer)", definition: "금융회사의 중개 없이 사적 개인 간에 금융거래가 체결될 수 있도록 중개하는 금융 플랫폼입니다." },
+            { category: "금융 및 핀테크", keyword: "오픈 뱅킹 (Open Banking)", definition: "금융 데이터와 서비스를 안전하게 공유할 수 있도록 개방된 표준을 통해 금융 기관과 제3자 간의 협력을 촉진하는 시스템입니다." },
+            { category: "금융 및 핀테크", keyword: "마이데이터 (MyData)", definition: "데이터 관리와 활용 권한이 정보 주체인 개인에게 있음(자기결정권 보장)을 강조하는 개념입니다. 흩어진 개인 금융 정보를 통합 제공하고 최적화된 금융 상품 추천을 지원합니다." },
+            { category: "IT 및 데이터", keyword: "빅데이터 (Big Data)", definition: "정형, 반정형, 비정형 데이터를 모두 포함하여, 일상적으로 비즈니스에 영향을 미치는 대용량 데이터를 지칭합니다." },
+            { category: "IT 및 데이터", keyword: "빅데이터 특징 (V's)", definition: "빅데이터를 구성하는 주요 요소는 Volume(규모/양), Velocity(속도), Variety(다양성), Value(가치)의 4V이며, 여기에 Variable(다차원 변수)을 포함하여 5V로 지칭되기도 합니다." },
+            { category: "IT 및 데이터", keyword: "정형 데이터", definition: "일정한 규칙을 가지며 체계적으로 정리된 데이터 (예: Excel, 통계 자료)입니다." },
+            { category: "IT 및 데이터", keyword: "반정형 데이터", definition: "일정한 규칙이 일부 존재하나 구조가 완전하지 않은 데이터 (예: 한글/MS워드 텍스트 파일, 센서 및 로그 데이터)입니다." },
+            { category: "IT 및 데이터", keyword: "비정형 데이터", definition: "일정한 규칙이나 체계 없이 생성되는 데이터 (예: 그림, 동영상, SNS 게시글, 포털 검색어)로, 빅데이터 분석의 주안점이 됩니다." },
+            { category: "IT 및 데이터", keyword: "메타 데이터 (Meta data)", definition: "데이터에 대한 정보를 담고 있는 데이터 (예: 파일의 위치, 크기, 소유자, 허가권)를 지칭합니다." },
+            { category: "IT 및 데이터", keyword: "Dark data (다크 데이터)", definition: "수집은 되었으나 분석에 활용되지 않는 데이터 (vs. clean data)입니다." },
+            { category: "IT 및 데이터", keyword: "데이터 마이닝 (Data Mining)", definition: "여러 데이터 가운데 숨겨져 있는 유용한 상관관계를 발견하는 기술입니다." },
+            { category: "IT 및 데이터", keyword: "OLTP", definition: "On-line Transaction Processing의 약어로, 비즈니스 업무를 처리하는 과정에서 발생하는 데이터를 다루며 현황 파악이 목적입니다." },
+            { category: "IT 및 데이터", keyword: "OLAP", definition: "On-line Analytical Processing의 약어로, 최종 사용자(End-user)가 다양한 분석을 하고 의사결정을 하기 위하여 다차원 정보를 제공하는 시스템입니다." },
+            { category: "IT 및 데이터", keyword: "DW (Data Warehouse)", definition: "데이터의 추출, 변환, 통합, 요약이 이루어진 데이터베이스 통합 저장소입니다. (데이터웨어하우징과 동일어)" },
+            { category: "IT 및 데이터", keyword: "DM (Data Mart)", definition: "소규모로 구축된 데이터웨어하우스입니다." },
+            { category: "IT 및 데이터", keyword: "디지털 트윈 (Digital Twin)", definition: "시스템의 라이프사이클 전반에 걸쳐 실시간 데이터를 사용하여 업데이트되고, 시뮬레이션 및 추론을 통하여 의사결정을 돕는 시스템의 가상 모델입니다." },
+            { category: "IT 및 데이터", keyword: "클라우드 컴퓨팅 (Cloud Computing)", definition: "H/W, S/W 등의 컴퓨팅 자원을 누구나 필요한 만큼 빌려 쓰고 사용한 만큼 요금을 지급하는 방식의 서비스입니다." },
+            { category: "IT 및 데이터", keyword: "SaaS, PaaS, IaaS", definition: "클라우드 컴퓨팅 서비스 모델의 종류입니다. **SaaS**는 S/W 서비스 제공, **PaaS**는 개발 실행 플랫폼 제공, **IaaS**는 서버/스토리지 자원 제공을 의미합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "4차 산업혁명 정의", definition: "빅데이터 기반 디지털 전환, 가상세계와 현실세계의 융복합을 통한 새로운 가치 창출, CPS(사이버 물리 시스템)와 같이 초연결 사회의 데이터 분석을 통한 가치 창출을 특징으로 합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "CPS (사이버 물리 시스템)", definition: "IoT 기반으로 컴퓨팅과 물리 세계가 융합되어 자동화, 지능화되며, 현실 세계와 디지털 사이버 세계가 긴밀하게 결합된 시스템입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "DNA/ABC/ICBM", definition: "4차 산업혁명의 핵심 키워드 압축어입니다. **DNA**는 Big Data, Network, AI, **ABC**는 AI, Big data, Cloud computing, **ICBM**은 IoT, Cloud computing, Big data, Mobility를 의미합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "AI (인공지능)", definition: "컴퓨터 프로그램이 인간의 학습 능력, 판단 능력, 추론, 지각 능력 등 인간의 지적인 능력을 구현한 기술 분야입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "ML (머신러닝)", definition: "인간의 학습 능력과 같은 기능을 컴퓨터에 부여하기 위한 기술이며, 데이터를 기반으로 패턴을 학습하고 예측을 수행하는 기술입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "DL (딥러닝)", definition: "머신러닝 방법 중 신경망 기법을 적용하여, 빅데이터를 기반으로 스스로 학습하며 판단하는 기술입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "지도 학습 (Supervised L.)", definition: "머신러닝 학습 방법 중 하나로, 정답이 있는 데이터로 데이터 분류 및 올바른 결과 예측을 수행합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "비지도 학습 (Unsupervised L.)", definition: "머신러닝 학습 방법 중 하나로, 정답이 없는 데이터로 데이터의 유의미한 패턴이나 구조를 발견합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "강화 학습 (Reinforcement L.)", definition: "머신러닝 학습 방법 중 하나로, 행동에 대한 보상(성공과 실패의 시행착오)을 통해 누적 보상을 최대화하는 의사결정을 학습합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "생성형 AI (Generative AI)", definition: "챗GPT와 같이 몇 가지 원리로 자연어 문장을 만들어 내는 능력을 지칭하며, 실시간 딥러닝 기반 대화형 인공지능 챗봇 기술입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "ChatGPT (챗GPT)", definition: "실시간 대화형 인공지능 챗봇으로, 사용자와 주고받는 대화에서 질문에 답하도록 설계된 자연어 처리 모델입니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "Hallucination (환각 현상)", definition: "AI가 과도한 자신감이 잘못된 답변을 제시하거나 편향된 콘텐츠를 생성하는 현상을 말합니다." },
+            { category: "인공지능 및 4차 산업혁명", keyword: "Web 3.0", definition: "공정과 자율을 지향하며, 탈중앙화(분산화) 방식으로 지능화된 웹이 원하는 콘텐츠를 제공하고 개인 맞춤화를 실현하는 시대입니다." },
+            { category: "경영 및 전략", keyword: "혁신 (Innovation)", definition: "기존의 틀을 벗어나 새로운 가치를 창출하는 것을 말하며, 삶의 표준 변화를 동반하는 포괄적 개념입니다. 핵심 포인트는 방향과 속도입니다." },
+            { category: "경영 및 전략", keyword: "DT/DX (디지털 전환)", definition: "Digital Transformation의 약어로, 디지털과 물리적 요소들의 통합을 통해 비즈니스 모델을 변화하고 새롭게 정립하는 것입니다." },
+            { category: "경영 및 전략", keyword: "디지로그 (Digilog)", definition: "디지털 기술에 아날로그 감성을 결합한 형태의 제품 및 서비스를 뜻하며, 기술과 감성의 공존을 의미합니다." },
+            { category: "경영 및 전략", keyword: "CSR (기업의 사회적 책임)", definition: "기업 수익의 일부를 사회에 환원함으로써 기업의 책임을 대신한다는 개념입니다. 자선 활동과 같은 선행으로 진행됩니다." },
+            { category: "경영 및 전략", keyword: "CSV (공유가치 창출)", definition: "기업과 이해관계자들이 공유가치를 창출하고 그러한 공유가치가 사회적 가치, 경제적 가치 등으로 합리적 배분을 통한 동반 성장을 유도하는 경영철학입니다." },
+            { category: "경영 및 전략", keyword: "ESG", definition: "환경적 요인(Environmental), 사회적 책임(Social), 거버넌스의 투명경영(Governance)을 의미합니다. CSR과 CSV의 확장 개념이자 이제는 선택이 아닌 필수 요인으로 자리매김 중입니다." },
+            { category: "경영 및 전략", keyword: "O2O (On-line to Off-line)", definition: "오프라인에서 온라인으로의 전환을 유도하는 전략입니다." }
+        ];
+
+        const glossaryList = document.getElementById('glossaryList');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const noResults = document.getElementById('noResults');
+
+        // 카테고리 순서를 정의하여 기존 순서("금융 및 핀테크", "IT 및 데이터", ...)를 유지합니다.
+        const categoryOrder = [
+            "금융 및 핀테크", 
+            "IT 및 데이터", 
+            "인공지능 및 4차 산업혁명", 
+            "경영 및 전략"
+        ];
+
+        /**
+         * 커스텀 정렬 함수: 
+         * 1. 카테고리 순서 유지 (categoryOrder 배열 기반)
+         * 2. 용어에 한글이 있는 경우를 우선 배치
+         * 3. 한글/영어 그룹 내에서 한국어(초성) 순서로 정렬
+         */
+        function koreanSortComparator(a, b) {
+            const aCatIndex = categoryOrder.indexOf(a.category);
+            const bCatIndex = categoryOrder.indexOf(b.category);
+
+            // 1. Primary sort: Category order (by predefined index)
+            if (aCatIndex !== bCatIndex) {
+                return aCatIndex - bCatIndex;
+            }
+            
+            // 2. Secondary sort: Korean presence (Korean first, English later)
+            // 키워드에 한글 문자가 포함되어 있는지 확인합니다.
+            const hasAHangeul = /[가-힣]/.test(a.keyword);
+            const hasBHangeul = /[가-힣]/.test(b.keyword);
+
+            if (hasAHangeul && !hasBHangeul) return -1; // A(한글 포함)가 B(한글 미포함)보다 먼저
+            if (!hasAHangeul && hasBHangeul) return 1;  // B(한글 포함)가 A(한글 미포함)보다 먼저
+
+            // 3. Tertiary sort: Keyword Hangeul/English sort
+            // 한글 포함 용어는 'ko' 로케일을 사용하여 초성 순서로 정렬 (예: 간편결제, 마이데이터)
+            if (hasAHangeul || hasBHangeul) {
+                // 'ko' 로케일은 초성, 중성, 종성 순서를 따릅니다.
+                return a.keyword.localeCompare(b.keyword, 'ko', { sensitivity: 'base' });
+            }
+            
+            // 순수 영어나 기타 용어는 표준 로케일 비교
+            return a.keyword.localeCompare(b.keyword, 'en');
+        }
+
+        // 데이터 로드 후 즉시 정렬을 적용합니다.
+        glossaryData.sort(koreanSortComparator);
+
+
+        /**
+         * Converts a category string to a suitable color class for Tailwind.
+         * @param {string} category 
+         * @returns {string} Tailwind color classes
+         */
+        function getCategoryColor(category) {
+            switch (category) {
+                case '금융 및 핀테크':
+                    return 'bg-blue-100 text-blue-800 border-blue-300';
+                case 'IT 및 데이터':
+                    return 'bg-green-100 text-green-800 border-green-300';
+                case '인공지능 및 4차 산업혁명':
+                    return 'bg-indigo-100 text-indigo-800 border-indigo-300';
+                case '경영 및 전략':
+                    return 'bg-purple-100 text-purple-800 border-purple-300';
+                default:
+                    return 'bg-gray-100 text-gray-800 border-gray-300';
+            }
+        }
+
+        /**
+         * Renders the glossary items to the DOM.
+         * @param {Array<Object>} data - The filtered array of glossary items.
+         */
+        function renderGlossary(data) {
+            glossaryList.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            }
+            noResults.classList.add('hidden');
+
+            data.forEach(item => {
+                const colorClass = getCategoryColor(item.category);
+                
+                const card = document.createElement('div');
+                card.className = 'glossary-card bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer';
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2 sm:mb-0">${item.keyword}</h2>
+                        <span class="text-sm font-medium px-3 py-1 rounded-full border ${colorClass} self-start sm:self-auto whitespace-nowrap">
+                            ${item.category}
+                        </span>
+                    </div>
+                    <p class="mt-4 text-gray-600 leading-relaxed">${item.definition}</p>
+                `;
+                glossaryList.appendChild(card);
+            });
+        }
+
+        /**
+         * Filters the glossary data based on search input and category selection.
+         */
+        function filterGlossary() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+
+            const filteredData = glossaryData.filter(item => {
+                const matchesSearch = searchTerm === '' || 
+                                      item.keyword.toLowerCase().includes(searchTerm) || 
+                                      item.definition.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = selectedCategory === 'all' || 
+                                        item.category === selectedCategory;
+
+                return matchesSearch && matchesCategory;
+            });
+
+            renderGlossary(filteredData);
+        }
+
+        // Initial render on page load
+        window.onload = function() {
+            filterGlossary();
+        };
+
+    </script>
+</body>
+</html>
