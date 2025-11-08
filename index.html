@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>김용민 금융 일반 포트폴리오</title>
-    <script> window.chtlConfig = { chatbotId: "2135718855" } </script>
-<script async data-id="2135718855" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font setting for Inter and Korean support -->
@@ -185,7 +183,7 @@
             </div>
         </section>
 
-        <!-- 3. 교과 내용 요약 보기 (Curriculum Content Summary) Section - 새롭게 추가됨 -->
+        <!-- 3. 교과 내용 요약 보기 (Curriculum Content Summary) Section -->
         <section id="content-summary" class="mb-16 lg:mb-20">
             <h2 class="text-3xl sm:text-4xl font-bold text-pnu-blue mb-8 border-b-4 border-pnu-blue pb-2">
                 📂 교과 내용 요약 보기
@@ -193,7 +191,7 @@
             <p class="text-lg text-gray-600 mb-6">
                 수업에서 다룬 전체 교과 내용의 핵심을 PDF 파일로 요약하여 제공합니다.
             </p>
-            <!-- Changed the large block link to a centered button link -->
+            <!-- Link to PDF as a button -->
             <div class="text-center mt-10">
                 <a href="수업자료.pdf" target="_blank" class="inline-flex items-center bg-pnu-blue text-white py-3 px-8 rounded-full font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg">
                     <!-- PDF Icon (Lucide-react equivalent SVG) - Smaller size -->
@@ -209,7 +207,30 @@
             </div>
         </section>
 
-        <!-- 4. 수강 후기 및 소감 (Reflection) Section -->
+        <!-- 4. 주가 비교 (Stock Price Comparison) Section - 새롭게 추가됨 -->
+        <section id="stock-comparison" class="mb-16 lg:mb-20">
+            <h2 class="text-3xl sm:text-4xl font-bold text-pnu-blue mb-8 border-b-4 border-pnu-blue pb-2">
+                📈 주가 비교
+            </h2>
+            <p class="text-lg text-gray-600 mb-6">
+                금융 수업 중 분석했던 기업들의 주가 변동 및 재무 비교 자료입니다. (Gemini를 활용한 심층 분석 자료)
+            </p>
+            <!-- Link to Gemini Share as a prominent action block -->
+            <div class="text-center mt-10">
+                <a href="https://gemini.google.com/share/05043b4be895" target="_blank" class="inline-flex items-center bg-purple-600 text-white py-4 px-10 rounded-xl font-extrabold text-xl hover:bg-purple-700 transition duration-300 transform hover:scale-105 shadow-2xl">
+                    <!-- Star Icon (Lucide-react equivalent SVG) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gem">
+                        <path d="M6 3 12 9 18 3"/>
+                        <path d="M6 15 12 21 18 15"/>
+                        <path d="M12 9V15"/>
+                        <path d="M18 9 12 15 6 9"/>
+                    </svg>
+                    Gemini 심층 분석 자료 보기
+                </a>
+            </div>
+        </section>
+
+        <!-- 5. 수강 후기 및 소감 (Reflection) Section -->
         <section id="reflection" class="mb-16 lg:mb-20 bg-pnu-light p-8 rounded-2xl shadow-xl border-l-8 border-pnu-blue">
             <h2 class="text-3xl sm:text-4xl font-bold text-pnu-blue mb-6">
                 ✨ 수강 후기 및 소감
